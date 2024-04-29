@@ -17,7 +17,7 @@ To utilize the dataset for the above purposes, you can follow these steps to set
 ```bash
 # Set up the virtual environment
 virtualenv immunocto
-source ./immunocto/bin/activate
+source immunocto/bin/activate
 
 # Install required packages
 pip install -r requirements.txt
