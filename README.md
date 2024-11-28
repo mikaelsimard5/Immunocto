@@ -9,11 +9,11 @@ The **Immunocto V1** database is hosted on **Zenodo**: https://zenodo.org/upload
 
 The database includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E images, along with their corresponding binary masks obtained from SAM. Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
 
-## Use cases of this code
-This code can be particularly useful for researchers who:
+## Use cases of this repository
+Use the scripts in this repository for the following:
 
-1. Need to extract a larger context around each cell (bounding boxes larger than 64x64 pixels).
-2. Wish to access corresponding immunofluorescence (IF) data.
+1. Extract larger context around each cell (bounding boxes larger than 64x64 pixels).
+2. Access the corresponding immunofluorescence (IF) data.
 
 ## Example Code
 To utilize the dataset for the above purposes, you can follow these steps to set up and run the provided code:
@@ -28,3 +28,5 @@ pip install -r requirements.txt
 
 # Run the script
 python read_HE_IF.py
+```
+`read_HE_IF.py` illustrates how to open a given region of interest with central coordinates `(cx)_(cy)` directly from the whole slide images, both for H&E and IF channels. 
