@@ -15,8 +15,8 @@ This dataset can be particularly useful for researchers who:
 To utilize the dataset for the above purposes, you can follow these steps to set up and run the provided code:
 
 ```bash
-# Set up the virtual environment
-virtualenv immunocto
+# Set up the virtual environment (tested with python 3.9.19)
+python -m venv immunocto
 source immunocto/bin/activate
 
 # Install required packages
