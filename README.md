@@ -1,6 +1,8 @@
 # Immunocto
 
-**Immunocto** is a comprehensive immune cell database derived from H&E stained whole slide images.
+**Immunocto** is a comprehensive immune cell database derived from H&E stained whole slide images. 
+
+See the publication at: https://arxiv.org/abs/2406.02618.
 
 ## ImmunoctoV1 Database
 The **ImmunoctoV1** database, hosted on **Zenodo**, comprises `.png` images of size 64x64 pixels, extracted from H&E images, along with their corresponding binary masks sourced from SAM. Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
