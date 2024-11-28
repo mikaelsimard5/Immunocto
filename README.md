@@ -4,11 +4,13 @@
 
 See the publication at: https://arxiv.org/abs/2406.02618.
 
-## ImmunoctoV1 Database
-The **ImmunoctoV1** database, hosted on **Zenodo**, comprises `.png` images of size 64x64 pixels, extracted from H&E images, along with their corresponding binary masks sourced from SAM. Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
+## Immunocto V1 Database
+The **Immunocto V1** database is hosted on **Zenodo**: https://zenodo.org/uploads/11073373.
 
-## Usage Scenarios
-This dataset can be particularly useful for researchers who:
+The database includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E images, along with their corresponding binary masks obtained from SAM. Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
+
+## Use cases of this code
+This code can be particularly useful for researchers who:
 
 1. Need to extract a larger context around each cell (bounding boxes larger than 64x64 pixels).
 2. Wish to access corresponding immunofluorescence (IF) data.
