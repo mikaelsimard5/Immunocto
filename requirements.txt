@@ -1,5 +1,6 @@
 boto3==1.34.93
 imagecodecs==2024.1.1
-pandas==2.2.2
+numpy==1.23.1
+pandas==1.5.0
 tifffile==2024.4.24
 zarr==2.17.2
