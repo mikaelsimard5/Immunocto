@@ -32,15 +32,3 @@ def parse_arguments():
         raise ValueError("Invalid value for --gpus. Must be a scalar (int) or a list.")
     
     return args.config, n_gpus, gpu_devices
-
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-

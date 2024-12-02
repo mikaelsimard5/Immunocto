@@ -1,14 +1,21 @@
-# Point of this code:
-import argparse
+import lightning as L
+from sklearn import preprocessing
 import toml
 import torch
 
 
+
+from Data_loading.dataloader_digpat import get_tile_dataset
 from Utils.parser import parse_arguments
+from Utils.esthetics import generate_model_name
+from Utils.training_prep import get_logger, get_callbacks, get_class_weights, get_transforms
 
 
 def load_config(config_file):
     return toml.load(config_file)
+
+
+
 
 
 def main(config_file=None, n_gpus=1, gpu_devices=0):
@@ -17,20 +24,42 @@ def main(config_file=None, n_gpus=1, gpu_devices=0):
 
     print("********************************************************************************************************")
     print(f"Available GPUs: {torch.cuda.device_count()}, {config['ADVANCEDMODEL']['n_gpus']} GPUs are used for training.")
-
-    tile_dataset = get_tile_dataset(config, subset = {'prob_tissue_type_tumour': config['BASEMODEL']['Prob_Tumour_Tresh']})
-    tile_dataset = tile_dataset.loc[:, ["coords_x", "coords_y", "wsi_path", config['DATA']['Label'], "id"]] # keep only useful info
-    config['DATA']['N_Classes'] = len(tile_dataset[config['DATA']['Label']].unique())
-
-    # Print some stats
-    counter_diagnosis = tile_dataset.groupby('wsi_path').head(n=1)
-    print('Number of WSI per diagnosis:')
-    print(counter_diagnosis['diagnosis'].value_counts())
-    print(f'Number of unique WSI in tile_dataset is {tile_dataset["wsi_path"].nunique()} after merge.')
-    print(f"There are {config['DATA']['N_Classes']} classes in the training dataset.")
     print("********************************************************************************************************")
 
+    # Load dataset and print stats
+    tile_dataset = get_tile_dataset(config['DATA']['data_file'], valid_labels=config['DATA'].get("valid_labels", None))
+    config['DATA']['N_Classes'] = len(tile_dataset['label'].unique())
+    print(f"There are {config['DATA']['N_Classes']} classes in the training dataset.")
+    value_counts = tile_dataset['label'].value_counts()
+    print("\n".join([f"{label}     : {count} instances ({count/len(tile_dataset) * 100:.1f}%)" for label, count in value_counts.items()]))
+    print("********************************************************************************************************")
 
+    model_name = generate_model_name(config)
+    logger = get_logger(config, model_name)
+    callbacks = get_callbacks(config, model_name=model_name)
+    L.seed_everything(config['ADVANCEDMODEL']['Random_Seed'], workers=True)
+    torch.set_float32_matmul_precision('medium')
+
+    train_transform, val_transform = get_transforms(config)
+    label_encoder = preprocessing.LabelEncoder()
+    label_encoder.fit(tile_dataset['label']) 
+
+    # Encode tile_dataset classes
+    tile_dataset['label'] = label_encoder.transform(tile_dataset['label'])
+    #conversion_dict = {class_name: idx for idx, class_name in enumerate(label_encoder.classes_)}
+
+    trainer = L.Trainer(devices=gpu_devices,
+                        strategy="ddp",
+                        accelerator="gpu",
+                        max_epochs=config['ADVANCEDMODEL']['Max_Epochs'],
+                        precision=config['BASEMODEL']['Precision'],
+                        callbacks=callbacks,
+                        logger=logger,
+                        check_val_every_n_epoch=1,
+                        log_every_n_steps=5,
+                        sync_batchnorm=True)
+
+    config['DATA']['weights'] = get_class_weights(tile_dataset, label_encoder)           
 
 
 
