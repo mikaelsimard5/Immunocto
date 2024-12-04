@@ -38,7 +38,7 @@ def generate_model_name(config):
         f"V{str(safe_get(data, 'val_size')).replace('.', 'p')}",
         f"eps{safe_get(optimizer, 'eps')}",
         f"lr{safe_get(optimizer, 'lr')}",
-        f"fold{safe_get(data, 'train_fold', ['NA'])[0]}",
+        f"fold{safe_get(data, 'train_fold', ['NA'])}",
         f"ls{str(safe_get(regularization, 'label_smoothing')).replace('.', 'p')}",
         f"{safe_get(scheduler, 'type')}"
     ]))

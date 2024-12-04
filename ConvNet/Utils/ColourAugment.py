@@ -16,7 +16,9 @@ def make_3d(x):
 
 class ColourAugment(nn.Module):
     """
-    Colour augmentation based on:
+    Perform colour augmentation for histopathology images.
+
+    Based on:
     (1) A. C. Ruifrok and D. A. Johnston, “Quantification of histochemical staining by color deconvolution”.
     (2) the scikit-learn codes rgb2hed and hed2rgb (reimplemented here for torch tensors).
     (3) DOI: 10.1109/TMI.2018.2820199 for the perturbation scheme.
@@ -24,6 +26,13 @@ class ColourAugment(nn.Module):
 
     def __init__(self, sigma=0.05, mode='uniform'):
         super(ColourAugment, self).__init__()
+        """
+        Initialize ColourAugment with perturbation parameters.
+        
+        Args:
+            sigma (float): Standard deviation for perturbation.
+            mode (str): Perturbation mode ('uniform' or 'normal').
+        """        
 
         # In Ruifrok and Johnston's original paper, they do a 3-stain deconvolution with the last
         # one as DAB, with a stain vector [0.27, 0.57, 0.78]. In our case, we do H&E only. The
@@ -43,6 +52,7 @@ class ColourAugment(nn.Module):
         self.mode = mode
 
     def rgb_to_stain(self, img, conv_matrix):
+        """Convert RGB image to stain concentrations."""
 
         c, h, w = img.shape
         img = img.reshape(img.shape[0], -1)  # collapse (C, H, W) to (C, H*W)
@@ -53,6 +63,7 @@ class ColourAugment(nn.Module):
         return torch.maximum(stains, torch.tensor(0), out=stains).reshape(c, h, w)
 
     def stain_to_rgb(self, stains, conv_matrix):
+        """Convert stain concentrations back to RGB."""
 
         c, h, w = stains.shape
         stains = stains.reshape(stains.shape[0], -1)  # collapse (C, H, W) to (C, H*W)
@@ -62,9 +73,16 @@ class ColourAugment(nn.Module):
         rgb = torch.exp(log_rgb)
         return torch.clamp(rgb, min=0, max=1).reshape(c, h, w)
 
-    def forward(self, img):  # rgb -> he
-        # input img: float32 torch tensor(intensity ranging[0, 1]) of size (c, h, w)
-        # output: colour-normalised float32 torch tensor of the same size and range, with colours perturbed.
+    def forward(self, img):
+        """
+        Apply color augmentation.
+        
+        Args:
+            img (torch.Tensor): RGB image tensor of shape (C, H, W), float32 with intensity ranging from 0-1.
+        
+        Returns:
+            torch.Tensor: Colour augmented RGB image tensor, same type, size and range as input.
+        """        
 
         assert torch.all((img >= 0) & (img <= 1)), "The image is not scaled between 0 and 1."
 
