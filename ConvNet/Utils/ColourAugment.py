@@ -65,6 +65,9 @@ class ColourAugment(nn.Module):
     def forward(self, img):  # rgb -> he
         # input img: float32 torch tensor(intensity ranging[0, 1]) of size (c, h, w)
         # output: colour-normalised float32 torch tensor of the same size and range, with colours perturbed.
+
+        assert torch.all((img >= 0) & (img <= 1)), "The image is not scaled between 0 and 1."
+
         alpha, beta = torch.tensor(1.0), torch.tensor(0.0)
 
         conv_matrix_forward = torch.transpose(self.hed_from_rgb, 0, 1)

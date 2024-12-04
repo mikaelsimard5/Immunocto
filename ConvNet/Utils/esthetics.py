@@ -1,6 +1,14 @@
 def generate_model_name(config):
+    """
+    Generate a descriptive model name based on the configuration parameters.
 
-    # Extract relevant fields from the configuration with default fallback to 'NA'
+    Args:
+        config (dict): Configuration dictionary containing settings for the model.
+
+    Returns:
+        str: Generated model name.
+    """
+    # Extract sub-configurations with defaults to empty dictionaries
     basemodel = config.get("BASEMODEL", {})
     advancedmodel = config.get("ADVANCEDMODEL", {})
     augmentation = config.get("AUGMENTATION", {})
@@ -9,29 +17,30 @@ def generate_model_name(config):
     regularization = config.get("REGULARIZATION", {})
     scheduler = config.get("SCHEDULER", {})
 
-    # Helper function to safely get a value or default to 'NA'
     def safe_get(dictionary, key, default="NA"):
-        return dictionary.get(key, default)
+        """Helper function to safely fetch a value or return a default."""
+        value = dictionary.get(key, default)
+        return value if value is not None else default
 
-    # Build the model name
-    model_name = (
-        f"{safe_get(basemodel, 'Backbone')}"
-        f"_BS{safe_get(basemodel, 'Batch_Size')}"
-        f"_{safe_get(basemodel, 'Loss_Function', '')[:2]}Loss"
-        f"_{safe_get(basemodel, 'Precision')}"
-        f"_{str(safe_get(basemodel, 'Target_Pixel_Size')).replace('.', 'p')}um"
-        f"_{safe_get(basemodel, 'Target_Patch_Size', ['NA'])[0]}px"
-        f"_E{safe_get(advancedmodel, 'Max_Epochs')}"
-        f"_{'pretrain' if safe_get(advancedmodel, 'Pretrained') else 'nopretrain'}"
-        f"_seed{safe_get(advancedmodel, 'Random_Seed')}"
-        f"_sigma{str(safe_get(augmentation, 'Colour_Sigma')).replace('.', 'p')}"
-        f"_T{str(safe_get(data, 'Train_Size')).replace('.', 'p')}"
-        f"_V{str(safe_get(data, 'Val_Size')).replace('.', 'p')}"
-        f"_eps{safe_get(optimizer, 'eps')}"
-        f"_lr{safe_get(optimizer, 'lr')}"
-        f"_fold{safe_get(data, 'Fold', ['NA'])[0]}"
-        f"_ls{str(safe_get(regularization, 'Label_Smoothing')).replace('.', 'p')}"
-        f"_{safe_get(scheduler, 'type')}"
-    )
+    # Construct the model name
+    model_name = "_".join(filter(None, [
+        f"{safe_get(basemodel, 'backbone')}",
+        f"BS{safe_get(basemodel, 'batch_size')}",
+        f"{safe_get(basemodel, 'loss_function', '')[:2]}Loss",
+        f"{safe_get(basemodel, 'precision')}",
+        f"{str(safe_get(basemodel, 'target_pixel_size')).replace('.', 'p')}um",
+        f"{safe_get(basemodel, 'target_patch_size', ['NA'])}px",
+        f"E{safe_get(advancedmodel, 'max_epochs')}",
+        f"{'pretrain' if safe_get(advancedmodel, 'pretrained') else 'nopretrain'}",
+        f"seed{safe_get(advancedmodel, 'random_seed')}",
+        f"sigma{str(safe_get(augmentation, 'colour_sigma')).replace('.', 'p')}",
+        f"T{str(safe_get(data, 'train_size')).replace('.', 'p')}",
+        f"V{str(safe_get(data, 'val_size')).replace('.', 'p')}",
+        f"eps{safe_get(optimizer, 'eps')}",
+        f"lr{safe_get(optimizer, 'lr')}",
+        f"fold{safe_get(data, 'train_fold', ['NA'])[0]}",
+        f"ls{str(safe_get(regularization, 'label_smoothing')).replace('.', 'p')}",
+        f"{safe_get(scheduler, 'type')}"
+    ]))
 
     return model_name
