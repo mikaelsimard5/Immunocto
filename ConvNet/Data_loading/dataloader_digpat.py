@@ -20,8 +20,8 @@ class DataGenerator(torch.utils.data.Dataset):
         super().__init__()
 
         self.config = config
-        self.Target_Pixel_Size = self.config['BASEMODEL']['target_pixel_size']
-        self.Target_Patch_Size = self.config['BASEMODEL']['target_patch_size']
+        self.Target_Pixel_Size = self.config['BASEMODEL'].get('target_pixel_size', 0)
+        self.Target_Patch_Size = self.config['BASEMODEL'].get('target_patch_size', 0)
         self.transform = transform
         self.target_transform = target_transform
         self.tile_dataset = tile_dataset
