@@ -1,23 +1,19 @@
 # Immunocto
 
-**Immunocto** is a comprehensive immune cell database derived from H&E stained whole slide images. 
+## Description and manuscript
+**Immunocto** is a comprehensive immune cell database derived from H&E stained whole slide images. See the publication at: https://arxiv.org/abs/2406.02618.
 
-See the publication at: https://arxiv.org/abs/2406.02618.
-
-## Immunocto V1 Database
 The **Immunocto V1** database is hosted on **Zenodo**: https://zenodo.org/uploads/11073373.
 
-The database includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E images, along with their corresponding binary masks obtained from SAM. Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
+The database includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E digital pathology whole slide images, along with their corresponding binary masks obtained from the Segment Anything Model (SAM). Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
 
-## Use cases of this repository
-Use the scripts in this repository for the following:
+This repository contains examplar code to do the following:
+1) **Extract additional information from the database**. 
+2) **Reproduce a subset of the results in the manuscript**.
 
-1. Extract larger context around each cell (bounding boxes larger than 64x64 pixels).
-2. Access the corresponding immunofluorescence (IF) data.
+## Setting up 
 
-## Example Code
-To utilize the dataset for the above purposes, you can follow these steps to set up and run the provided code:
-
+The virtual environment to run the scripts in this repository can be set up as follows:
 ```bash
 # Set up the virtual environment (tested with python 3.9.19)
 python -m venv immunocto
@@ -25,8 +21,63 @@ source immunocto/bin/activate
 
 # Install required packages
 pip install -r requirements.txt
-
-# Run the script
-python read_HE_IF.py
 ```
-`read_HE_IF.py` illustrates how to open a given region of interest with central coordinates `(cx)_(cy)` directly from the whole slide images, both for H&E and IF channels. 
+
+## 1. Extract additional information from the database
+
+We provide a script showing how to extract additional information on the database (corresponding immunofluorescence data, obtaining larger context around each cells such as bounding boxes larger than 64x64 pixels).
+
+## 2. Reproduce a subset of the results in the manuscript
+
+`./Image_Reader/read_HE_IF.py` shows how to extract additional information on the database, notably (1) the corresponding immunofluorescence data and (2) obtaining larger context around each cells such as bounding boxes larger than 64x64 pixels).
+	
+More specifically, `./Image_Reader/read_HE_IF.py` illustrates how to open a given region of interest with central coordinates `(cx)_(cy)` directly from the whole slide images, both for H&E and IF channels. 
+
+
+## Example Code
+
+We provide code to reproduce a subset of the results provided in the manuscript; generalising to other architectures/databases is trivial from this point.
+
+One can recreate partial results from table IV (recall on lymphocyte detection for various architectures/databases). To train the **SAM + ConvNet classifier** on the **Lizard data** and test it on the **Immunocto**, **SegPath** and **Lizard** test datasets, follow the next steps:
+
+### 1. Download the trained models and data
+
+Data and models are accessible with the following link:
+
+https://drive.google.com/drive/folders/1LQVMLhg4g4nzzOMvt4XEd6JW1zjV3E5X?usp=share_link\\
+
+Reach out to m.simard@ucl.ac.uk if there are any issues with the link.
+
+The google drive folder contains the sub-folder **trained_models**, which contains the SAM + ConvNet ensemble classifier trained on Lizard (5 models for 5 folds). There is also the zipped folder **data.zip** (which should be unzipped). After downloading the models and data, they should be moved to the main repository's folder such that the arborescence is as follows:
+
+```bash
+├── Immunocto
+│   ├── ConvNet
+│   ├── Image_Reader
+│   ├── data
+│   ├── trained_models
+```
+
+### 2. Run inference on test sets and obtain performance metrics
+Inference on the three test sets with the trained models can be ran with the following commands:
+
+```bash
+python ConvNet/Infer_Cell_Classifier.py --config ConvNet/Configs/test/infer_Lizard_SAM_ConvNet_on_Immunocto.ini --gpus 1
+
+python ConvNet/Infer_Cell_Classifier.py --config ConvNet/Configs/test/infer_Lizard_SAM_ConvNet_on_SegPath.ini --gpus 1
+
+python ConvNet/Infer_Cell_Classifier.py --config ConvNet/Configs/test/infer_Lizard_SAM_ConvNet_on_Lizard.ini --gpus 1
+```
+
+The configuration files use a batch size of 512, which can be modified depending on your GPU's VRAM.  The inference script will generate .csv files in ./Analysis/inference_results/, from which the final lymphocyte recall numbers can be obtained by running
+
+```bash
+python Analysis/Lymphocyte_Recall_Analysis.py
+```
+### 3. Re-train models
+If desired, the provided models can be re-trained as follows:
+
+```bash
+python ConvNet/Trainer_Cell_Classifier.py --config ConvNet/Configs/train/trainer_Lizard_SAM_ConvNet_fold1.ini --gpus 1
+```
+The above is for fold 1; adjust the configuration file path to `trainer_Lizard_SAM_ConvNet_fold{k}.ini` for the $k^{th}$ fold. 
