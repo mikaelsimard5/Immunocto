@@ -35,7 +35,7 @@ We provide code to reproduce a subset of the results provided in the manuscript;
 
 For instance, to train the **SAM + ConvNet classifier** on the **Lizard data** and test it on the **Immunocto**, **SegPath** and **Lizard** test datasets to obtain the results of table IV (recall on lympocyte detection), follow the next steps:
 
-### 1. Download the trained models and data
+### Download the trained models and data
 
 Data and trained models can be accessed here:
 
@@ -53,7 +53,7 @@ The google drive folder holds the sub-folder **trained_models**, which contains 
 │   ├── trained_models
 ```
 
-### 2. Run inference on test sets and obtain performance metrics
+### Run inference on test sets and obtain performance metrics
 Inference on the three test sets with the trained models can be ran with the following commands:
 
 ```bash
@@ -69,7 +69,7 @@ The configuration files use a batch size of 512, which can be modified depending
 ```bash
 python Analysis/Lymphocyte_Recall_Analysis.py
 ```
-### 3. Re-train models
+### Re-train models
 If desired, the provided models can be re-trained as follows:
 
 ```bash
