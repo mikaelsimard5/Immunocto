@@ -1,7 +1,10 @@
 # Immunocto
 
 ## Description and manuscript
-**Immunocto** is a comprehensive immune cell database derived from H&E stained whole slide images. See the publication at: https://arxiv.org/abs/2406.02618.
+**Immunocto** is a comprehensive database of 2,828,818 immune cells derived from H&E stained whole slide images. The database contains 952,929 CD4$^+$ T cells, 467,395 CD8$^+$ T cells, 480,900 B cells and 381,594 macrophages. It also includes 
+
+
+See the publication at: https://arxiv.org/abs/2406.02618 for more details.
 
 The **Immunocto V1** database is hosted on **Zenodo**: https://zenodo.org/uploads/11073373.
 
