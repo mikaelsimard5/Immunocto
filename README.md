@@ -1,16 +1,13 @@
 # Immunocto
 
 ## Description and manuscript
-**Immunocto** is a comprehensive database of 2,828,818 immune cells derived from H&E stained whole slide images. The database contains 952,929 CD4$^+$ T cells, 467,395 CD8$^+$ T cells, 480,900 B cells and 381,594 macrophages. It also includes 
-
-
-See the publication at: https://arxiv.org/abs/2406.02618 for more details.
+**Immunocto** is a comprehensive database of 2,828,818 immune cells derived from H&E stained whole slide images from a colorectal cancer cohort. The database contains 952,929 CD4+ T cells, 467,395 CD8+ T cells, 480,900 CD20+ B cells and 381,594 CD68 or CD163+ macrophages. It also includes 4,565,636 other cells/objects. See the publication at: https://arxiv.org/abs/2406.02618 for more details.
 
 The **Immunocto V1** database is hosted on **Zenodo**: https://zenodo.org/uploads/11073373.
 
-The database includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E digital pathology whole slide images, along with their corresponding binary masks obtained from the Segment Anything Model (SAM). Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
+The database hosted on Zenodo includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E digital pathology whole slide images, along with their corresponding binary masks obtained from the Segment Anything Model (SAM). Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
 
-This repository contains examplar code to do the following:
+This repository contains exemplar code to do the following:
 1) **Extract additional information from the database**. 
 2) **Reproduce a subset of the results in the manuscript**.
 
