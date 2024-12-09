@@ -59,7 +59,7 @@ def main(config_file=None, n_gpus=1, gpu_devices=0):
     data = digpat_datamodule(tile_dataset, config=config, train_transform=train_transform, val_transform=val_transform)
 
     print("********************************************************************************************************")
-    # Train model
+    # train model
 
     model = SAM_ConvNet(config, LabelEncoder = label_encoder)
     trainer.fit(model, datamodule=data)
