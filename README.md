@@ -39,7 +39,7 @@ For instance, to train the **SAM + ConvNet classifier** on the **Lizard data** a
 
 Data and trained models can be accessed here:
 
-https://drive.google.com/drive/folders/1LQVMLhg4g4nzzOMvt4XEd6JW1zjV3E5X?usp=share_link\\
+https://drive.google.com/drive/folders/1LQVMLhg4g4nzzOMvt4XEd6JW1zjV3E5X?usp=share_link
 
 Please open an issue if the link is not accessible anymore.
 
