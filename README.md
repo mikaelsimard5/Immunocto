@@ -1,13 +1,13 @@
 # Immunocto
 
 ## Description and manuscript
-**Immunocto** is a comprehensive immune cell database derived from H&E stained whole slide images. See the publication at: https://arxiv.org/abs/2406.02618.
+**Immunocto** is a comprehensive database of 2,828,818 immune cells derived from H&E stained whole slide images from a colorectal cancer cohort. The database contains 952,929 CD4+ T cells, 467,395 CD8+ T cells, 480,900 CD20+ B cells and 381,594 CD68 or CD163+ macrophages. It also includes 4,565,636 other cells/objects. See the publication at: https://arxiv.org/abs/2406.02618 for more details.
 
 The **Immunocto V1** database is hosted on **Zenodo**: https://zenodo.org/uploads/11073373.
 
-The database includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E digital pathology whole slide images, along with their corresponding binary masks obtained from the Segment Anything Model (SAM). Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
+The database hosted on Zenodo includes `.png` images of size 64x64 pixels (resolution of 0.325 um/pixel), extracted from H&E digital pathology whole slide images, along with their corresponding binary masks obtained from the Segment Anything Model (SAM). Each image in the dataset follows a naming convention: `(class)_(cx)_(cy).png`. Here, `(cx, cy)` denotes the centroid coordinates of each object within the whole slide image.
 
-This repository contains examplar code to do the following:
+This repository contains exemplar code to do the following:
 1) **Extract additional information from the database**. 
 2) **Reproduce a subset of the results in the manuscript**.
 
@@ -25,30 +25,25 @@ pip install -r requirements.txt
 
 ## 1. Extract additional information from the database
 
-We provide a script showing how to extract additional information on the database (corresponding immunofluorescence data, obtaining larger context around each cells such as bounding boxes larger than 64x64 pixels).
+`./Image_Reader/read_HE_IF.py` shows how to extract additional information on the database. This includes (1) getting the registered immunofluorescence data to H&E, and (2) producing larger context images around each cells. For instance, images of size 256x256 around each cell can be extracted. 
+	
+More specifically, `./Image_Reader/read_HE_IF.py` illustrates how to open a given region of interest with central coordinates `(cx)_(cy)` and arbitrary patch size directly from the whole slide images, both for H&E and IF channels. 
 
 ## 2. Reproduce a subset of the results in the manuscript
 
-`./Image_Reader/read_HE_IF.py` shows how to extract additional information on the database, notably (1) the corresponding immunofluorescence data and (2) obtaining larger context around each cells such as bounding boxes larger than 64x64 pixels).
-	
-More specifically, `./Image_Reader/read_HE_IF.py` illustrates how to open a given region of interest with central coordinates `(cx)_(cy)` directly from the whole slide images, both for H&E and IF channels. 
+We provide code to reproduce a subset of the results provided in the manuscript; generalising to other architectures/databases is trivial from this point. 
 
+For instance, to train the **SAM + ConvNet classifier** on the **Lizard data** and test it on the **Immunocto**, **SegPath** and **Lizard** test datasets to obtain the results of table IV (recall on lympocyte detection), follow the next steps:
 
-## Example Code
+### Download the trained models and data
 
-We provide code to reproduce a subset of the results provided in the manuscript; generalising to other architectures/databases is trivial from this point.
+Data and trained models can be accessed here:
 
-One can recreate partial results from table IV (recall on lymphocyte detection for various architectures/databases). To train the **SAM + ConvNet classifier** on the **Lizard data** and test it on the **Immunocto**, **SegPath** and **Lizard** test datasets, follow the next steps:
+https://drive.google.com/drive/folders/1LQVMLhg4g4nzzOMvt4XEd6JW1zjV3E5X?usp=share_link
 
-### 1. Download the trained models and data
+Please open an issue if the link is not accessible anymore.
 
-Data and models are accessible with the following link:
-
-https://drive.google.com/drive/folders/1LQVMLhg4g4nzzOMvt4XEd6JW1zjV3E5X?usp=share_link\\
-
-Reach out to m.simard@ucl.ac.uk if there are any issues with the link.
-
-The google drive folder contains the sub-folder **trained_models**, which contains the SAM + ConvNet ensemble classifier trained on Lizard (5 models for 5 folds). There is also the zipped folder **data.zip** (which should be unzipped). After downloading the models and data, they should be moved to the main repository's folder such that the arborescence is as follows:
+The google drive folder holds the sub-folder **trained_models**, which contains the SAM + ConvNet ensemble classifier trained on Lizard (5 models for 5 folds). There is also a zipped folder **data.zip**. After downloading (and unzipping) the models and data, they should be moved to the main repository's folder such that the arborescence is as follows:
 
 ```bash
 ├── Immunocto
@@ -58,7 +53,7 @@ The google drive folder contains the sub-folder **trained_models**, which contai
 │   ├── trained_models
 ```
 
-### 2. Run inference on test sets and obtain performance metrics
+### Run inference on test sets and obtain performance metrics
 Inference on the three test sets with the trained models can be ran with the following commands:
 
 ```bash
@@ -69,12 +64,12 @@ python ConvNet/Infer_Cell_Classifier.py --config ConvNet/Configs/test/infer_Liza
 python ConvNet/Infer_Cell_Classifier.py --config ConvNet/Configs/test/infer_Lizard_SAM_ConvNet_on_Lizard.ini --gpus 1
 ```
 
-The configuration files use a batch size of 512, which can be modified depending on your GPU's VRAM.  The inference script will generate .csv files in ./Analysis/inference_results/, from which the final lymphocyte recall numbers can be obtained by running
+The configuration files use a batch size of 512, which can be modified depending on your GPU's VRAM. The code also works with >1 GPUs, although inference is fast (~1 minute on a NVIDIA RTX 3090). The inference script will generate .csv files in ./Analysis/inference_results/, from which the final lymphocyte recall numbers can be obtained by running
 
 ```bash
 python Analysis/Lymphocyte_Recall_Analysis.py
 ```
-### 3. Re-train models
+### Re-train models
 If desired, the provided models can be re-trained as follows:
 
 ```bash
